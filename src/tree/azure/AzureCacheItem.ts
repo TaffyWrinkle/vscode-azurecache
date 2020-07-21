@@ -27,7 +27,7 @@ import path = require('path');
  */
 export class AzureCacheItem extends AzureParentTreeItem implements FilterParentItem {
     public static contextValue = 'redisCache';
-    public static commandId = 'azureCache.viewCacheInfoReact';
+    public static commandId = 'azureCache.viewProperties';
 
     private filterExpr: string;
     private isClustered: boolean;

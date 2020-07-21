@@ -4,7 +4,7 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 import { ParsedRedisResource } from '../../parsed/ParsedRedisResource';
-import { createKeyContentUri, decodeUri } from '../../utils/UriUtils';
+import { createKeyContentUri, decodeUriPayload } from '../../utils/UriUtils';
 
 describe('URI Utils', () => {
     const hostName = 'my-cache.redis.cache.windows.net';
@@ -76,9 +76,9 @@ describe('URI Utils', () => {
     describe('decodeUri', () => {
         it('should throw error if given bad query params', () => {
             const uriMissingQuery = vscode.Uri.parse('azureCache:host.net/mykey', true);
-            assert.throws(() => decodeUri(uriMissingQuery), Error);
+            assert.throws(() => decodeUriPayload(uriMissingQuery), Error);
             const uriMissingPayload = vscode.Uri.parse('azureCache:host.net/mykey?badpayload=test', true);
-            assert.throws(() => decodeUri(uriMissingPayload), Error);
+            assert.throws(() => decodeUriPayload(uriMissingPayload), Error);
         });
 
         it('should properly encode given parameters', () => {
@@ -92,7 +92,7 @@ describe('URI Utils', () => {
                 key: 'mykey',
                 subkey: 'mysubkey',
             };
-            const payload = decodeUri(uri);
+            const payload = decodeUriPayload(uri);
             assert.deepStrictEqual(payload, expectedPayload);
         });
     });

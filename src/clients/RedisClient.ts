@@ -326,8 +326,9 @@ export class RedisClient {
         return this.exec((await this.getClient(db)).lindex(key, index));
     }
 
-    public async info(section: string): Promise<string> {
-        return this.exec((await this.getClient()).info(section));
+    public async info(section?: string): Promise<string> {
+        const transaction = section ? (await this.getClient()).info(section) : (await this.getClient()).info();
+        return this.exec(transaction);
     }
 
     public async clusterScan(

@@ -6,7 +6,7 @@ import { RedisClient } from './clients/RedisClient';
 import { ParsedRedisResource } from './parsed/ParsedRedisResource';
 import * as Strings from './Strings';
 import { SupportedKeyType } from './SupportedKeyType';
-import { createKeyContentUri, decodeUri } from './utils/UriUtils';
+import { createKeyContentUri, decodeUriPayload, createKeyInfoUri, isInfoUri } from './utils/UriUtils';
 
 /**
  * Provides the contents of Redis keys in TextDocuments.
@@ -31,9 +31,19 @@ export class KeyContentProvider implements vscode.TextDocumentContentProvider {
     async provideTextDocumentContent(uri: vscode.Uri): Promise<string | null> {
         let value: string | null = null;
 
+        if (isInfoUri(uri)) {
+            console.log();
+            if (!this.currentResource) {
+                throw new Error(Strings.ErrorCurrentResource);
+            }
+            const client = await RedisClient.connectToRedisResource(this.currentResource);
+            value = await client.info();
+            return value;
+        }
+
         try {
             // Parse URI to get the cache's resource ID and key information
-            const { db, key, type, subkey } = decodeUri(uri);
+            const { db, key, type, subkey } = decodeUriPayload(uri);
 
             if (!this.currentResource) {
                 throw new Error(Strings.ErrorCurrentResource);
@@ -93,6 +103,18 @@ export class KeyContentProvider implements vscode.TextDocumentContentProvider {
         this.currentValue = value;
         this.currentResource = parsedRedisResource;
         const uri = createKeyContentUri(parsedRedisResource, db, type, key, subkey, displayedSubkey);
+        /**
+         * Without the next line, if the user refreshes a list item after pushing a new element to it, accessing element 0 would
+         * still show the previous element 0 value. Basically, it tells VS Code to not cache contents of keys.
+         */
+        this.onDidChangeEmitter.fire(uri);
+        const doc = await vscode.workspace.openTextDocument(uri);
+        await vscode.window.showTextDocument(doc, { preserveFocus: true, preview: false });
+    }
+
+    public async showInfo(parsedRedisResource: ParsedRedisResource): Promise<void> {
+        this.currentResource = parsedRedisResource;
+        const uri = createKeyInfoUri(parsedRedisResource);
         /**
          * Without the next line, if the user refreshes a list item after pushing a new element to it, accessing element 0 would
          * still show the previous element 0 value. Basically, it tells VS Code to not cache contents of keys.

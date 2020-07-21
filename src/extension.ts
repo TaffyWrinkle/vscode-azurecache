@@ -73,8 +73,20 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         })
     );
 
+    registerCommand('azureCache.viewInfo', async (actionContext: IActionContext, treeItem?: AzureCacheItem) => {
+        if (!treeItem) {
+            treeItem = (await ExtVars.treeDataProvider.showTreeItemPicker(
+                AzureCacheItem.contextValue,
+                actionContext
+            )) as AzureCacheItem;
+        }
+
+        const parsedRedisResource = treeItem.parsedRedisResource;
+        await ExtVars.keyContentProvider.showInfo(parsedRedisResource);
+    });
+
     context.subscriptions.push(
-        vscode.commands.registerCommand('azureCache.viewCacheInfoReact', async (azureCacheItem: AzureCacheItem) => {
+        vscode.commands.registerCommand('azureCache.viewProperties', async (azureCacheItem: AzureCacheItem) => {
             azureCacheItem.showCacheProperties();
         })
     );

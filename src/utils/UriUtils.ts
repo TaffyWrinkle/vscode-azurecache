@@ -89,6 +89,17 @@ export function createKeyContentUri(
     return vscode.Uri.parse(uriString, true);
 }
 
+export function createKeyInfoUri(parsedRedisResource: ParsedRedisResource): vscode.Uri {
+    const { resourceId, hostName, name } = parsedRedisResource;
+    const uriString = `${ExtVars.prefix}:${hostName}/${name} Info`;
+    return vscode.Uri.parse(uriString, true);
+}
+
+export function isInfoUri(uri: vscode.Uri): boolean {
+    // return uri.path.includes('/info/') && !uri.query;
+    return uri.path.endsWith(' Info') && !uri.query;
+}
+
 /**
  * Parses a URI into its components.
  *
@@ -97,7 +108,7 @@ export function createKeyContentUri(
  *
  * @param uri URI
  */
-export function decodeUri(uri: vscode.Uri): ShowKeyPayload {
+export function decodeUriPayload(uri: vscode.Uri): ShowKeyPayload {
     if (!uri.query) {
         throw new Error(ErrorInvalidUri);
     }

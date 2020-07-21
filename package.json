@@ -62,6 +62,13 @@
             ]
         },
         "menus": {
+            "editor/title/context": [
+                {
+                  "command": "azureCache.refresh",
+                  "when": "resourceScheme == azureCache && resource =~ /\\wInfo$/",
+                  "group": "navigation"
+                }
+            ],
             "view/item/context": [
                 {
                     "command": "azureCache.selectSubscriptions",
@@ -72,6 +79,11 @@
                     "command": "azureCache.refresh",
                     "when": "view == azureCache && viewItem == azureextensionui.azureSubscription",
                     "group": "9_refresh"
+                },
+                {
+                    "command": "azureCache.viewInfo",
+                    "when": "view == azureCache && viewItem == redisCache",
+                    "group": "inline"
                 },
                 {
                     "command": "azureCache.setKeyFilter",
@@ -150,7 +162,7 @@
                     "when": "never"
                 },
                 {
-                    "command": "azureCache.viewCacheInfoReact",
+                    "command": "azureCache.viewProperties",
                     "when": "never"
                 }
             ]
@@ -159,15 +171,18 @@
             {
                 "command": "azureCache.selectSubscriptions",
                 "title": "Select Subscriptions...",
-                "icon": {
-                    "light": "resources/light/filter.svg",
-                    "dark": "resources/dark/filter.svg"
-                },
+                "icon": "$(filter)",
                 "category": "Azure Cache"
             },
             {
                 "command": "azureCache.refresh",
                 "title": "Refresh",
+                "category": "Azure Cache"
+            },
+            {
+                "command": "azureCache.viewInfo",
+                "title": "Info",
+                "icon": "$(info)",
                 "category": "Azure Cache"
             },
             {
@@ -225,7 +240,7 @@
                 "category": "Azure Cache"
             },
             {
-                "command": "azureCache.viewCacheInfoReact",
+                "command": "azureCache.viewProperties",
                 "title": "View cache info",
                 "category": "Azure Cache"
             }
