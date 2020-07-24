@@ -366,6 +366,10 @@ export class RedisClient {
         );
     }
 
+    public async scard(key: string, db?: number): Promise<number> {
+        return this.exec((await this.getClient(db)).scard(key));
+    }
+
     public async sscan(
         key: string,
         cursor: number | string,
